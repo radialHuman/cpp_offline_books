@@ -480,9 +480,61 @@ public:
 * Needs a read again, more in later chapters of TCPL'13
 ---
 > ## Chapter 5 - Template
+* Function overloading with each fucntion for a different type can be avoided by generalizing it as a fucntion that takes in any type
+* _Templates_ are functions or classes that represents the concept in a general manner
+``` cpp
+template <typename T>
+// template fucntion
+T someFunction(const T& a, const T& b)
+{
+    // implementation
+}
+// template class
+class someClass
+{   
+private:
+    T v1[2];
+public:
+    // implementation
+}
+```
+* Apart from these, lists, vectors, maps, unordered maps, can also be templated.
+* Since they are compile time mechanism, there is no run time over head.
 
+> ### Function objects
+* Also called as functors.
+* (???)
 
+> ### Variadic templates
+* Templates that take in parameters of variable number.
+* Like *args in python.
+* Generalizing not only the type but also the number of arguments passed
+* Used for recursive actions
+``` cpp
+template <typename T, typename... tail>
+void f (T head, Tail... tail)
+{
+    g(head); // do something for head
+    f(tail...); // do something to tail parameters
+}
+```
 
+> ### Alias
+* To make synonym of type or a template.
+* To make long names of functions short
+``` cpp
+template<typename T>
+using v = std::vector<T>
+void func(const T& i)
+{
+    v v1{1,2,3,4};
+    // implementation
+}
+```
+> ### Template compilation model
+* Uses duck typing during compile time type check for templates
+---
+> ## Chapter 6 - Library overview
 
 
 
