@@ -88,7 +88,7 @@ char* p  =&v[3]; // a pointer to the 4th character element of array v
 ```
 * \* : means pointing to the contents of and it is a type
 * & : means address of
-* if there is nothign being pointed by the pointer then it is nullptr
+* if there is nothing being pointed by the pointer then it is nullptr
 (??? more explanation)
 
 > ### for loops
@@ -321,7 +321,7 @@ void f (const std::vector<int> v) noexcept
 ```
 > ##### Invariants (class invariant)
 * A pre-defined condition (assumptions) that a class must hold when its member function is called
-* This can be sued to avoid the exception usage
+* This can be used to avoid the exception usage
 (???)
 
 > ##### Static assertion
@@ -341,16 +341,145 @@ int main()
 * "using" not to be used in header file 
 ---
 > ## Chapter 4 - Classes
+* _Abstraction and resource management._
+* _Classes help in object oriented programming and templates help in generic._
+* _Whenever our design for a program has a useful concept,
+idea, entity, etc., we try to represent it as a class._
+* _Makes code easier to maintain, more efficient, more elegant, easier to use, easier to read, and easier to reason
+about._
 
+> ### Concrete type classes
+* They behave ‘‘just like built-in types.’’
+* They have their own semantics and sets of operations
+* The defining characteristic of a concrete type is that its representation is part of its definition.
+* If the representation changes in any significant way, a user
+must recompile, just like in built-in types
+* For types that don’t change often, and where local variables provide much-needed clarity and efficiency, this is acceptable and often ideal.
+* For flexibility, major parts of its representation on the free store (dynamic memory, heap) and access them through
+the part stored in the class object itself.
+>1.  ##### Arithmetic type
+* The class definition itself contains only the operations requiring access to the representation
+* Simple operations are inline and not a fucntion call
+* **Default Constructor** is a constructor with no arguments, and eliminates the possibility of uninitialized variables
+* **Const** makes sure the variables passed are not affected while operating on it
+* **Operator overloading** has be done cautiously
+* Built in types should no tbe affected or altered
 
+> 2. ##### Container type
+* Like vectors in std
+* New is to create and destructor is to deallocate memory. Using ~ in front of the class name
+* **Delete** also can be used to do the same
+* The technique of acquiring resources in a constructor and releasing them in a destructor, known as **Resource Acquisition Is Initialization or RAII**, allows us to eliminate ‘‘naked new operations,’’ that is, to avoid allocations in general code and keep them buried inside the implementation of well-behaved abstractions. Similarly, ‘‘naked delete operations’’ should be avoided. Avoiding naked new and naked delete makes code far less error-prone and far easier to keep free of resource leaks
+    * _Initializer list_ : 
+    ``` cpp
+    std::vector<double> v1{1,2,3,4,5};
+    ```
+    * _push_back_ : 
+    ``` cpp
+    std::vector<double> v1;
+    v1.push_back(2.0);
+    ```
+    * _emplace_back_ : 
+    ``` cpp
+    std::vector<double> v1;
+    v1.emplace_back(2.0);
+    ```
+    * push_back has a move operation involved, while emplace_back has fewer and cheaper operations. So almost always use emplace_back().
+    <br /><br />
+* __Static_cast__: Type converter, does not check the value it is converting. Judicious use of the type system and well-designed libraries allow us to eliminate unchecked cast in higher-level software.
+> ### Abstract Type
+* Unlike concrete type where representation is a part of their definition, here, user is insulated from implementation details
+* Achieved by having the representation separated from interface and having no genuine local variables
+``` cpp
+class Container {
+public:
+    virtual double& operator[](int) = 0; // pure virtual function
+    virtual int size() const = 0; // const member function 
+    virtual ˜Container() {} // destructor
+};
+```
+* __Virtual__ : may be redefined later in some other class that inherits this class
+* If all the members of the class are virtual its a pure virtual class or abstract class and thus it can crete an object as it just serves as an interface
+* Since its not clear whats the properties are, they are stored in free space and accessed via & or *.
+* __use()__ : is used to access such interface class (polymorphic type)
+* They dont have constructors as nothing has to be initialized
+* But has a destructor thats virtual 
+> ##### Inheritance
+``` cpp
+class superclass // or base class
+{
+    public:
+    // something
+    private:
+    //something else
+}
 
+class subclass : public superclass // or derived classs
+{
+    // can use stuff from superclass <- inheritance
+}
+``` 
+* __Override__ : This keyword can be used to override the nature of function from derived class thats virtual in base class
+* use() (???)
 
+> ### Virtual Functions
+* Virtual functions are mapped via a virtual function table or vtbl to the objects
+* Same as the normal function bu the overhead of pointers used in vtbl
 
+> ### Class hierarchy
+* Its shows relation between classes, like a tree or a family structure, with them sharing members in a hierarchical manner.
+> ##### Explicit overriding 
+* Virtual function in the base class can be overridden by the function with the same name and same type in the derived clas by explicitly writing "override" after the fucntion in derived class along with its implementation.
+* **Pointers** discussed later.
 
+> ### Copy and Move
+* User and built-in types can be copied by default, memberwise
+* Copying concrete class is memberwise , for more complex concrete its not and for abstract its almost never.
+> #### Copying containers
+``` cpp
+// not the right way to copy
+void function(const std::vector<int>& v1)
+{
+    std::vector<int> v2 = v1;
+    v1[0] = 1; // v2[0] also becomes 1
+    v2[2] = 3; // v1[2] also becomes 3
+}
+```
+* Since std::vector had destructor, default memberwise copying is wrong.
+* **Copy constructor** : used for deep copying, where a separate memory is allocated along with a pointer to avoid two pointer pointing to one location situation
 
+> #### Moving containers
+* (???) more on this by Scott Meyers
+* Sometimes copying can be a costly affair. So move constructor, that uses rvalue reference to get the task done.
+* Move operator doesn need const as it is going to remove the value from its argument
 
+> #### Essential Operations
+``` cpp
+class X {
+public:
+    X(Sometype); // ‘‘ordinar y constr uctor’’: create an object
+    X(); //default constructor
+    X(const X&); // copy constr uctor
+    X(X&&); //move constr uctor
+    X& operator=(const X&); // copy assignment: clean up target and copy
+    X& operator=(X&&); // move assignment: clean up target and move
+    ˜X(); //destructor: clean up
+// ...
+};
+```
 
+> #### Resource Management
+* Garbage collection is fundamentally a global memory management scheme. Clever implementations can compensate, but as systems are getting more distributed (think multicores, caches, and clusters),locality is more important than ever.
+* RAII (???)
 
+> #### Suppressing opertions
+* Delete default copy and move constructor
+* ...
+
+> ### Advice
+* Needs a read again, more in later chapters of TCPL'13
+---
+> ## Chapter 5 - Template
 
 
 
