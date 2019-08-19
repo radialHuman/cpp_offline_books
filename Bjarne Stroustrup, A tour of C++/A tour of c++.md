@@ -736,7 +736,84 @@ asdfg
 > ## Chapter 8 - I/O stream
 __Chapter 38 of TC++PL__
 
+---
+> ## Chapter 9 - Containers
+__Chapter 31 of TC++PL__
+* Containers hold objects.
+* Suitable containers with suitable operations makes a good code.
 
+> ### Vector
+* Sequence of elements of same type, stored in contiguous memory. 
+* Made of element, last space, last element, allocated space
+* ex:
+``` cpp
+std::vector<Shape*> v1(23);
+// creates a size 32 vector with nullptr
+std::vector<double> v2(32,9.9);
+// creates a size of 32 with initial value 9.9
+```
+* Vector adding element to the end:
+``` cpp
+#include <iostream>
+#include <string>
+#include <vector>
+
+
+int main()
+{
+    std::vector<int> v1;
+    v1.push_back(10); // appends to the end of vector
+    v1.emplace_back(20); // better way to append 
+    for(auto i: v1)
+    	std::cout << i << ", ";
+    std::cout << std::endl;
+}
+
+// OUTPUT
+// 10, 20, 
+```
+* v1.reserve() is used by user or other vector members to  make room for more elements
+* If not enough contiguous memory is available, it moves the whole container.
+* But this happens infrequently.
+* Range Checking (???)
+
+> ### List
+* It is a doubly-linked list
+* Used for inserting and deleting operations
+* Unless its required go for vector for better traversal, sorting and searching
+
+> ### Map
+* Its a red-black tree or a associative array (~python dictionary)
+* Implemented as a balanced binary tree.
+* Optimized for lookup
+
+> ### unordered_map
+* Big o of map is (log n).
+* Can be better with hashed lookup than a ordering fucntion
+* std lib has default hash fucntion for built-in types
+* Creating a new hash function by combining existing hash functions using exclusive or (ˆ) is simple
+and often very effective.
+
+> ### Overview
+* Basic operation:
+    * size()
+    * begin() and end()
+    * push_back()
+1. vector< T>
+1. list< T>
+1. forward_list< T>
+1. deque< T>
+1. set< T>
+1. multiset< T>
+1. map<K,V>
+1. multimap<K,V>
+1. unordered_map<K,V>
+1. unordered_multimap<K,V>
+1. unordered_set< T>
+1. unordered_multiset< T>
+---
+> ## Chapter 10 - Algorithm
+__Chapter 32 of TC++PL__
 
 
 
