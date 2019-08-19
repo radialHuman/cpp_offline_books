@@ -1,7 +1,7 @@
 # A tour of C++ by Bjarne Stroustrup
 
 > ## Chapter 1 - The Basic
-
+__Chapter 5-6, 9-10, 12 of TC++PL__
 * _The source file of the program has to be complied to produce an **object file**, which is then combined with __linker__ producing the __executable file__._
 
 * _The executable program is created for specific harware/system combination and is not portable, the only poratble part is the source code_
@@ -127,6 +127,7 @@ int main()
 * use nullptr than 0 or null
 ---
 > ## Chapter 2 - User defined types
+__Chapter 8 of TC++PL__
 * _In c++, the built-in types and their operations are rich but low level delibrately._
 * _Types built using built-in types for high level abstraction are user defined types._
 * Ex: Classes, Structs, enums ets.
@@ -236,6 +237,7 @@ int main()
 * Define operations on enumerations for safe and simple use;
 ---
 > ## Chapter 3 - Modularity
+__Chapter 13-15 of TC++PL__
 * Parts of a program (source code)
     * Functions
     * User-defined types
@@ -340,7 +342,8 @@ int main()
 > ### Advice
 * "using" not to be used in header file 
 ---
-> ## Chapter 4 - Classes
+> ## Chapter 4 - 
+__Chapter 16-22 of TC++PL__
 * _Abstraction and resource management._
 * _Classes help in object oriented programming and templates help in generic._
 * _Whenever our design for a program has a useful concept,
@@ -477,9 +480,10 @@ public:
 * ...
 
 > ### Advice
-* Needs a read again, more in later chapters of TCPL'13
+* Needs a read again, more in later chapters of T++CPL'13
 ---
 > ## Chapter 5 - Template
+__Chapter 20-29 of TC++PL__
 * Function overloading with each fucntion for a different type can be avoided by generalizing it as a fucntion that takes in any type
 * _Templates_ are functions or classes that represents the concept in a general manner
 ``` cpp
@@ -535,10 +539,69 @@ void func(const T& i)
 * Uses duck typing during compile time type check for templates
 ---
 > ## Chapter 6 - Library overview
+__Chapter 30 of TC++PL__
+* Libraries makes writing codes easier than writing in bare language.
+* 2/3rd of ISO C++ standard is about library specifications.
+* There are other GUI, web interface, db interface libraries too.
+* Well structured, thought, and optimized libraries are in the std library.
+* Facilities in std libraries:
+    1. Run time language support (Allocation and RTTI)
+    1. Modified C std library
+    1. Strings
+    1. regex matching
+    1. I/O streams
+    1. STL framework for containers
+    1. Support for numerical computation
+    1. Support concurrent programming i.e. threads, locks
+    1. STL style generic programming
+    1. Smart pointers and interface to garbage collector
+    1. Spl. purpose containers like tuple, array, bitset.
+* Every lib has a std header
+``` cpp
+#include <vector>
+#include <string>
+```
+* namespace is std::
+``` cpp
+std::vector<int> v1{1,2,3,4,5};
+// initializes a vector 
+```
+* List of header and their functions (Sample)
 
+Headers | Functions |
+---| ---
+< algorithm> | copy(), find(), sort() |
+< array> | array  |
+< chrono> | duration, time_point  |
+< cmath> | sqrt(), pow()  |
+< complex> | complex, sqrt(), pow()  |
+< forward_list> | forward_list  |
+< fstream> | fstream, ifstream, ofstream  |
+< future> | future, promise  |
+< ios> | hex,dec,scientific,fixed,defaultfloat  |
+< iostream> | istream, ostream, cin, cout |
+< map> | map, multimap  |
+< memory> | unique_ptr, shared_ptr, allocator  |
+< random> | default_random_engine, normal_distribution  |
+< regex> | regex, smatch  |
+< string> | string, basic_string  |
+< set> | set, multiset  |
+< sstream> | istrstream, ostrstream  |
+< stdexcept> | length_error, out_of_range, runtime_error  |
+< thread> | thread  |
+< unordered_map> | unordered_map, unordered_multimap  |
+< utility> | move(), swap(), pair |
+< vector> | vector  |
 
-
-
+* C libraries which were like
+``` cpp
+#include <stdlib.h>
+// are now changed to
+#include <cstdlib>
+```
+---
+> ## Chapter 7 - String and Regex
+__Chapter 36-37 of TC++PL__
 
 
 
@@ -571,12 +634,6 @@ distinguish it from other text
 def func(a,b)
     return a+b
 ```
-
-| ID    | Name  |
-|------ |------ |
-|1      |Name 1 |
-|2      |Name 2 |
-|3      |Name 3 |
 
 * [ ] check list item unselected
 * [x] check list item selected
