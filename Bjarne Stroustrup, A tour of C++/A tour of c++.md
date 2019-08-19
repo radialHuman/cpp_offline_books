@@ -603,6 +603,138 @@ Headers | Functions |
 > ## Chapter 7 - String and Regex
 __Chapter 36-37 of TC++PL__
 
+* "string" type helps users from avoiding C-type of char*.
+* "regex" for string pattern matching.
+
+> ### String
+* String concatenation:
+``` cpp
+#include <iostream>
+#include <string>
+
+std::string func(const std::string& firstName,const std::string& lastName)
+{
+    return firstName +" "+ lastName;
+}
+
+int main()
+{
+    std::string a = "Some";
+    std::string b = "Name";
+    auto result = func(a,b) ;
+    std::cout << result <<'\n';
+    
+    // another way of adding
+    std::string name = "Mr. ";
+    name+= "Someone";
+    std::cout << name << '\n';
+}
+/*
+* OUTPUT
+Some Name
+Mr. Someone
+*/
+```
+* Std string has a _move constructor_ so its efficient no matter the size
+* += is more concise, efficient, explicit
+* String is mutable and characters can be access via name[3].
+``` cpp
+#include <iostream>
+#include <string>
+
+int main()
+{
+    std::string name = "Somename";
+    name[4] = 'N';
+    std::cout << name << '\n';
+    std::cout << name.substr(0,4) << '\n';
+    std::cout << name.replace(0,4,"One") << '\n';
+    std::cout << std::toupper(name[6]) << '\n';
+    // gives back the ascii value of that character
+}
+/*
+* OUTPUT
+SomeName
+Some
+OneName
+69
+*/
+```
+> #### String implementation
+* __Short string optimization__ : Short strings are kept in string objects while longer once are in free store.
+* String performance depends on run time environment.
+* multithreading implementation and memory allocation can be constly.
+* Memory fragmentation also can happen if there is variety.
+* std::string is an alias for basic_string
+
+> ### Regular Expressions
+* Tersely describe a pattern in text
+1. regex_match()
+1. regex_replace()
+1. regex_search()
+1. regex_iterator()
+1. regex_token_iterator()
+
+
+> #### Regular expression searching
+* "smatch" is a type of container of this library that has a vector of sub strings
+* First element of this has the complete match
+* Works a bit differently, the pattern representation
+* 
+``` cpp
+#include <iostream>
+#include <string>
+#include <regex>
+
+int main()
+{
+    std::string var = "first secon123d third for456th";
+
+    const std::regex r("(\\d+)");
+    std::smatch sm;
+
+    std::regex_search(var, sm, r);
+    for (auto i : sm)
+            std:: cout << i << ", ";
+}
+/*
+OUTPUT
+123, 456
+*/
+```
+(???) needs more pattern knowledge
+
+> #### Regular expression iterator
+* Finds all the patterns in string
+``` cpp
+#include <iostream>
+#include <string>
+#include <regex>
+
+void test()
+{
+    std::string input = "aa as; asd ++eˆasdf asdfg";
+    std::regex pat {R"(\s+(\w+))"};
+    for (std::sregex_iterator p(input.begin(),input.end(),pat); p!=std::sregex_iterator{}; ++p)
+        std::cout << (*p)[1] << '\n';
+}
+
+int main()
+{
+  test();
+}
+
+/*
+*OUTPUT
+as
+asd
+asdfg
+*/
+```
+
+---
+> ## Chapter 8 - I/O stream
+__Chapter 38 of TC++PL__
 
 
 
