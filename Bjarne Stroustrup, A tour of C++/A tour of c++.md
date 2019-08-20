@@ -814,6 +814,129 @@ and often very effective.
 ---
 > ## Chapter 10 - Algorithm
 __Chapter 32 of TC++PL__
+* Containers are just for storing objects, but the main purpose is to operate on them
+* Most common operations, on most common containers are in std library
+* A std algorithm expresses in terms of half open sequences.
+* The sequence is represented by a pair of iterators i.e. first element and one-beyond-the-last element.
+``` cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+int main()
+{
+    std::vector<std::string> v1{"something","nothing","anything"};
+    std::cout << "Before sorting: ";
+    for (auto i: v1)
+    	std::cout << i << ", ";
+
+    std::cout << std::endl;
+
+    std::cout << "After sorting: ";
+    std::sort(v1.begin(), v1.end());
+    
+    std::list<std::string> result;
+ 	// copying the objects to a different vector
+    std::unique_copy(v1.begin(), v1.end(),std::back_inserter(result));
+    for (auto i: result)
+    	std::cout << i << ", ";
+}
+
+/*
+* OUTPUT
+Before sorting: something, nothing, anything, 
+After sorting: anything, nothing, something,
+*/
+```
+* back_inserter takes care of the memory allocation, unlike realloc() in C-style.
+* list has move constructor that takes care of copying value efficiently.
+
+> ### Use of Iterators
+* Algorithm returns many types of iterators
+* Used to separate algorithm and container
+* ex: find() returns an iterator fo the element found
+``` cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+int main()
+{
+    std::vector<std::string> v1{"something","nothing","anything"};
+    std::cout << *std::find(v1.begin(), v1.end(),"nothing") << std::endl;
+
+}
+
+/*
+* OUTPUT
+nothing
+*/
+```
+* To find the location of the occurances of object
+``` cpp
+(???)
+```
+> ### Iterators type
+* Depending on the contianer, the type of iterator differs.
+* Ex: std::vector's is a pointer, as thats enough to refere to the position in a vector
+* This iterator can also change its location if added, hence useful in range checking
+* Ex: std::list's is a pointer to a link
+* Semantic and naming of their operation is common across the Iterators
+* ++ will move it to the enxt element, * will give the element it refers to
+* Containers take care of their iterator types
+
+> ### Stream Iterator
+* Apart from containers, iterators can be used in anythign with a sequence like an output stream of values
+* *ostream_iterator* and *istream iterator*
+``` cpp
+#include <iostream>
+#include <iterator>
+#include <algorithm>
+#include <vector>
+// for ostream
+int main()
+{
+    std::vector<int> v1{4,2,5,7,3,5,7,8,9,10};
+    std::ostream_iterator<int> oo {std::cout};
+    std::copy(v1.begin(),v1.end(),oo );
+}
+
+/*
+* OUTPUT
+42573578910
+*/
+
+```
+istream_iterator (???)
+> ### Predicates
+* To make that action a parameter to the algorithm
+* Alternatively, a lambda function can be used inside a algorithm
+``` cpp
+#include <iostream>
+#include <iterator>
+#include <algorithm>
+#include <vector>
+
+int main()
+{
+    std::vector<int> v1{4,2,5,7,3,5,7,8,9,10};
+    auto p = std::count_if(v1.begin(), v1.end(), [](const auto& i){return i>3;});
+    // In this case, the action done by the lambda fucntion is the predicate
+    std::cout << p << std::endl;
+}
+
+/*
+* OUTPUT
+8
+*/
+
+```
+---
+> ## Chapter 11 - Utilities
+__Chapter 33-35 of TC++PL__
+
 
 
 
