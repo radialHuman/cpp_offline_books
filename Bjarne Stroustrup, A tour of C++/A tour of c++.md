@@ -735,6 +735,134 @@ asdfg
 ---
 > ## Chapter 8 - I/O stream
 __Chapter 38 of TC++PL__
+* __ostream__ : typed objects -> stream of characters (bytes)
+* __istream__ : typed objects <- stream of characters (bytes)
+* Operations on these are type-sensitive, type-safe, and can be used on user-defined types
+
+> ### Output (ostream)
+* std::cout is for output of any type
+* std::cerr is for reporting error
+* << : "put to"
+``` cpp
+#include <iostream>
+//#include <iterator>
+//#include <algorithm>
+//#include <vector>
+
+int main()
+{
+    int p;
+    if(p)
+        std::cout << p;
+    else
+    std::cerr << "Not present" << p;
+}
+
+/*
+* OUTPUT
+10
+*/
+```
+
+> ### Input (istream)
+* \>> "get from"
+* std::cin is standard input stream
+``` cpp
+#include <iostream>
+
+int main()
+{
+    int p;
+    std::cout << "Enter a value\n";
+    std::cin >> p;
+    std::cout << "Entered value is : " << p <<'\n';
+}
+```
+* _getline()_ is to input entire line
+> ### I/O state
+``` cpp
+vector<int> read_ints(istream& is)
+{
+    vector<int> res;
+    int i;
+    while (is>>i) // this tests if iostream is true or not and returns a reference to is
+        res.push_back(i);
+    return res;
+}
+```
+> ### I/O for user defined types
+* 
+``` cpp
+#include <iostream>
+
+class something
+{
+public:
+    int some;
+    double thing;
+    // overloading <<
+    friend std::ostream& operator<< (std::ostream& os, const something& x) // this has to be a friend
+    {
+        return os<< "{ "<<x.some << ", " << x.thing <<"}";
+    }
+};
+
+int main()
+{
+    something st{10,20};
+    std::cout << st;
+}
+
+/*
+* OUTPUT
+{ 10, 20}
+*/
+```
+> ### Formatting
+* Formatting control and manipulation can be done using the following libraries
+1. < ios>
+1. < istream>
+1. < ostream>
+1. < iomanip>
+
+``` cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << 1287 << ',' << std::hex << 1287 << ',' << std::oct << 1287 <<  ',' << std::scientific << 1287 <<  ',' << std::hexfloat << 1287 <<  ',' << std::fixed << 1287;
+}
+
+/*
+ * OUTPUT
+ 1287,507,2407,2407,2407,2407
+ */
+```
+> ### File stream <fstream>
+1. < ifstream> to read a file
+1. < ofstream> to write a file
+1. < fstream> to read and write a file
+
+> ## String stream <sstream>
+1. < istringstream> to read a string
+1. < ostringstream> to write a string
+1. < stringstream> to read and write a string
+``` cpp
+#include <iostream>
+#include <sstream>
+
+int main()
+{
+    std::ostringstream oss;
+    oss << "This is something that it reads : " << 1234;
+    std::cout << oss.str();
+}
+
+/*
+ * OUTPUT
+This is something that it reads : 1234
+ */
+```
 
 ---
 > ## Chapter 9 - Containers
