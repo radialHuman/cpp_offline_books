@@ -1291,6 +1291,72 @@ constexpr bool Is_arithmetic()
 ---
 > ## Chapter 12 - Numerics
 __Chapter 40 of TC++PL__
+* numeric computation
+typically occurs in the context of other work – such as
+    * database access
+    * networking
+    * instrument control
+    * graphics
+    * simulation
+    * financial analysis
+
+> ### < cmath>
+Function | Description |
+--- | --- |
+abs(x) | Absolute value
+ceil(x) | Smallest integer >= x
+floor(x) | Largest integer <= x
+sqrt(x) | Square root; x must be non-negative
+cos(x) | Cosine
+sin(x) | Sine
+tan(x) | Tangent
+acos(x) | Arccosine; the result is non-negative
+asin(x) | Arcsine; the result nearest to 0 is returned
+atan(x) | Arctangent
+sinh(x) | Hyperbolic sine
+cosh(x) | Hyperbolic cosine
+tanh(x) | Hyperbolic tangent
+exp(x) | Base e exponential
+log(x) | Natural logarithm, base e; x must be positive
+log10(x) | Base 10 logarithm
+
+* More mathematical functions are found in < cstdlib>
+* Errors are reported by setting errno from < cerrno> to EDOM for a domain error and to ERANGE for a range error.
+
+> ### < numeric>
+Function | Description |
+--- | ---|
+x=accumulate(b,e ,i) | x is the sum of i and the elements of [b:e)
+x=accumulate(b,e ,i,f) | accumulate using f instead of +
+x=inner_product(b,e ,b2,i) | x is the inner product of [b:e) and [b2:b2+(e−b)), that is, the sum of i and (∗p1)∗(∗p2) for each p1 in [b:e) and the corresponding p2 in [b2:b2+(e−b))
+x=inner_product(b,e ,b2,i,f,f2) | inner_product using f and f2 instead of + and ∗
+p=partial_sum(b,e,out) | Element i of [out:p) is the sum of elements [b:b+i]
+p=partial_sum(b,e,out,f) | partial_sum using f instead of +
+p=adjacent_difference(b,e ,out) | Element i of [out:p) is (∗b+i)−∗(b+i−1) for i>0; if e−b>0, then ∗out is ∗b
+p=adjacent_difference(b,e ,out,f) | adjacent_difference using f instead of −
+iota(b,e ,v) | For each element in [b:e) assign ++v; thus the sequence becomes v+1, v+2, ...
+
+``` cpp
+void f()
+{
+    list<double> lst {1, 2, 3, 4, 5, 9999.99999};
+    auto s = accumulate(lst.begin(),lst.end(),0.0); // calculate the sum
+    cout << s << '\n'; // pr int 10014.9999
+}
+```
+* _Complex_ numbers can be operated on using < complex> library
+* _Random Number_ under < random> can be sued to generator
+    * uniform_int_distribution
+    * normal_distribution
+    * exponential_distribution
+* < valarray>, inlike vectors are less general and more amenable to optimization for numerical computation
+    * support mathematical vector operations.
+
+---
+> ## Chapter 13 - Concurrency
+__Chapter 41-42 of TC++PL__
+
+
 
 
 <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> 
@@ -1299,9 +1365,7 @@ __Chapter 40 of TC++PL__
 Made possible by [Video](https://www.youtube.com/watch?v=HUBNt18RFbo "Markdown crash course")
 
 ___
----
----
----
+
 ### Other things that were not used in the notes but taught in the video
 
 ~~Something gets striked~~
@@ -1310,10 +1374,6 @@ ___
 
 ![Image name here]("https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/ISO_C%2B%2B_Logo.svg/1200px-ISO_C%2B%2B_Logo.svg.png")
 
-```where you want to execute the code
-To type in code here and
-distinguish it from other text
-```
 
 ```python
 def func(a,b)
