@@ -352,7 +352,7 @@ idea, entity, etc., we try to represent it as a class._
 about._
 
 > ### Concrete type classes
-* They behave ‘‘just like built-in types.’’
+* They behave ''just like built-in types.''
 * They have their own semantics and sets of operations
 * The defining characteristic of a concrete type is that its representation is part of its definition.
 * If the representation changes in any significant way, a user
@@ -372,7 +372,7 @@ the part stored in the class object itself.
 * Like vectors in std
 * New is to create and destructor is to deallocate memory. Using ~ in front of the class name
 * **Delete** also can be used to do the same
-* The technique of acquiring resources in a constructor and releasing them in a destructor, known as **Resource Acquisition Is Initialization or RAII**, allows us to eliminate ‘‘naked new operations,’’ that is, to avoid allocations in general code and keep them buried inside the implementation of well-behaved abstractions. Similarly, ‘‘naked delete operations’’ should be avoided. Avoiding naked new and naked delete makes code far less error-prone and far easier to keep free of resource leaks
+* The technique of acquiring resources in a constructor and releasing them in a destructor, known as **Resource Acquisition Is Initialization or RAII**, allows us to eliminate ''naked new operations,'' that is, to avoid allocations in general code and keep them buried inside the implementation of well-behaved abstractions. Similarly, ''naked delete operations'' should be avoided. Avoiding naked new and naked delete makes code far less error-prone and far easier to keep free of resource leaks
     * _Initializer list_ : 
     ``` cpp
     std::vector<double> v1{1,2,3,4,5};
@@ -460,7 +460,7 @@ void function(const std::vector<int>& v1)
 ``` cpp
 class X {
 public:
-    X(Sometype); // ‘‘ordinar y constr uctor’’: create an object
+    X(Sometype); // ''ordinar y constr uctor'': create an object
     X(); //default constructor
     X(const X&); // copy constr uctor
     X(X&&); //move constr uctor
@@ -1064,8 +1064,233 @@ int main()
 ---
 > ## Chapter 11 - Utilities
 __Chapter 33-35 of TC++PL__
+> ### Resource Management
+* Resource is something that has to be acquired and later, explicitly or implicitly, released ex:
+    * Memory
+    * Lock
+    * socket
+    * thread handles
+    * file handles
+* In a long program, not releasing them in a timely manner can lead to problems or crashes
+* Std lib are mot made to handle these leaks
+* They rely on constructor destructor pairs, to ensure resources do not outlive an object responsible for it
+* Thread, lock and mutex (???)
+* _RAII_ : Resource acquisition is initialization is fundamental to the idomatic handling of resources
 
+> ### Smart pointers
+* The above mentioned are for managing resources in scope, but for the ones in _free store_, <memory> has:
+    * unique_ptr
+    * shared_ptr
+* The use fo these is to prevent memory leaks
+* unique_ptr ensure object is destroyed whicherver way it exits the fucntion either by 
+    * Throwing an exception or
+    * executing return or
+    * falling off the end
+* Example:
+``` cpp
+void f(int i, int j) 
+{
+    X∗ p = new X; // allocate a new X
+    unique_ptr<X> sp {new X}; // allocate a new X and give its pointer to unique_ptr
+    // ...
+    if (i<99) throw Z{}; // may throw an exception
+    if (j<77) return; // may retur n "ear ly"
+    // ...
+    p−>do_something(); // may throw an exception
+    sp−>do_something(); // may throw an exception
+    delete p;
+}
+```
+* In this case, for the if comditions, P was not deleted due to a mistake by the programmer
+* Apart from using smart pointer, it can also be solved by avoiding "new" entirely
+* A smart pointer like unique_ptr can be sued, which is light and no space or time overhead
+* These are owners of the objects, like how vector is the handle to a sequence of objects
+* Shared_ptr is similar to unique_ptr, except they are copied and not moved
+* Since it is shared owner ship, it is destroyed when the last pointer pointing to it is destroyed
+* Creating an object in free store and passing a pointer to it to a smart ptr is odd and lenghty, so use make_shared( ) instead
+``` cpp
+#include <memory>
+struct
+{
+    int i;
+    double d;
+    char c;
+};
+// verbose
+std::shared_ptr<m> s1{new m{1,2.5,'d'}};
+// alternative
+auto p2 = std::make_shared<m>(1,2.5,'d');
+```
+* Theres is no make_unique() like make_shared(), but it can be user defined
+* Need to reduce the use of the following (in decreasing order of importance)
+    * New
+    * pointers
+    * references
+    * smart pointer
+* Contianers and other ways of managing resources are to be prefered
+* When we share an object, we need pointers (or references) to refer to the shared object, so a shared_ptr becomes the obvious choice (unless there is an obvious single owner).
+* When we refer to a polymorphic object, we need a pointer (or a reference) because we don’t know the exact type of the object referred to (or even its size), so a unique_ptr becomes the obvious choice.
+* A shared polymorphic object needs shared_ptr
+> ### Specialized COntainers
+* They are not exatcly like the once provided by STL
+* More like +/- containers
 
+Syntax | Desription |
+---| ---
+T[N] | Built-in array: a fixed-size continuously allocated sequence of N elements of type T; implicitly converts to a T∗
+array<T,N> | A fixed-size continuously allocated sequence of N elements of type T; like the built-in array, but with most problems solved
+bitset<N> | A fixed-size sequence of N bits
+vector<bool> | A sequence of bits compactly stored in a specialization of vector
+pair<T,U>| Tw o elements of types T and U
+tuple<T...>| A sequence of an arbitrary number of elements of arbitrary types
+basic_string<C>| A sequence of characters of type C; provides string operations
+valarray<T>| An array of numeric values of type T; provides numeric operations
+
+* No single container could serve all of these needs because some needs are contradictory,
+for example,
+    * ''ability to grow'' vs. ''guaranteed to be allocated in a fixed location,'' and
+    * ''elements do not move when elements are added'' vs. ''contiguously allocated.''
+
+> #### Array :
+* Is a fixed-size sequence of elements of a given type where the 
+number of elements is specified at compile time
+* Allocated with its elements on the stack, in an object, or in static storage
+* Does not follow the ‘‘handle to elements’’ model of STL containers
+* Element count must be a constant expression
+``` cpp
+std::array<int,3> a1 = {1,2,3};
+```
+* Array vs vector
+    * There is a significant performance advantage to be had by directly accessing elements allocated on the stack rather than allocating elements on the free store, accessing them indirectly through the vector (a handle), and then deallocating them
+    * On the other hand, the stack is a limited resource (especially on some embedded systems), and stack overflow is nasty
+* Array vs built-in array
+    * It saves from surprising nasty conversions to pointers
+    * It can be copied (using = or initialization)
+* Example (???)
+
+> #### Bitset
+* C++ supports the notion of small sets of flags efficiently through bitwise operations on integers
+* Providing operations on a sequence of N bits [0:N),
+where N is known at compile time.
+``` cpp
+std::bitset<9> bs1 {"110001111"};
+std::bitset<9> bs2 {399};
+bitset<9> bs3 = ˜bs1; // complement: bs3=="001110000"
+bitset<9> bs4 = bs1&bs3; // all zeros
+bitset<9> bs5 = bs1<<2; // shift left: bs5 = "111000000" >> is shift right
+```
+> ####  Pair and tuple
+* Pair is collection of two objects
+``` cpp
+#include <utility>
+
+std::pair p{1,"Something"};
+std::cout << p.first << ", " << p.second;
+```
+* Tuple is more than 2 objects, and heterogeneous
+``` cpp
+auto t =std::make_tuple(std::string{"Herring"},10, 1.23);
+std::string s = get<0>[t];
+```
+
+> ### Time
+* Time related operations can be performed using <chrono>
+``` cpp
+#include <iostream>
+#include <vector>
+#include <chrono>
+
+void do_work()
+{
+    std::vector<int> v;
+    for(int i=0; i<100; i++)
+        v.emplace_back(i);
+    for(auto i : v)
+        std::cout << " ";
+}
+
+using namespace std::chrono; // see §3.3
+int main()
+{
+    auto t0 = high_resolution_clock::now();
+    do_work();
+    auto t1 = high_resolution_clock::now();
+    auto x = t1-t0;
+    std::cout << x.count();
+    // this has to be converted to a known time unit by dynamic_casting
+}
+
+/*
+ * OUTPUT
+                                                                                                     2506300
+ */
+```
+* This is important for meausring the performance of code
+> ### Function adaptors
+* A function adaptor takes a function as argument and returns a function object that can be used to invoke the original function
+    * bind( )
+    * mem_fn( )
+* Functional programming terms: 
+    * Currying or partial evaluation
+> #### Bind
+* Binders can have arguments and placeholders for the ones we dont have value at the moment, and this can be assigned to a variable
+``` cpp
+#include <functional>
+//placeholders are found in the (sub)namespace std::placeholders that is part of <functional>.
+
+func(int, std::string)
+auto g = bind(func,2,std::placeholders::_1); // where _1 is the placeholder for the missing argument
+g("something"); // this becomes func(2,"something")
+
+// in caseof binding an overloaded function
+int func(int, int);
+double func (int , double);
+
+// its is confusing which one has to be binded, so it has to be explicitly mentioned
+auto g = bind((double(*)(int,double))func,_1,2);
+
+```
+* Return type of bind() varies depending on function return and arugument type
+
+> #### mem_fun()
+* Produces a fucntion object that can be a nonmember function
+* Used for mapping from oops to functional style
+* Often lambdas offer simple and generic alternative
+``` cpp
+(???)
+```
+> #### std::function()
+* (???)
+
+> ### Type function
+* Evaluates at complie time
+* Gives better performance, tight type checking, 
+* Using them is __metaprogramming__ and template metaprogramming if templates are involved
+* Example
+``` cpp
+#include <limits>
+constexpr float min = numeric_limits<float>::min()
+// gives smallest positive float
+constexpr sz = sizeof(z); 
+// gives number bytes in the int
+```
+> #### iterator_trait
+* _sort()_ has iterators with random access while _forward\_list_ has only forward iterators
+* To check the type of iterators
+* (???)
+
+> #### Type predicates
+* Used to show check if some object is of some particular type
+``` cpp
+template<typename T>
+constexpr bool Is_arithmetic()
+{
+    return std::is_arithmetic<T>::value ;
+}
+```
+---
+> ## Chapter 12 - Numerics
+__Chapter 40 of TC++PL__
 
 
 <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> 
