@@ -1356,8 +1356,51 @@ void f()
 > ## Chapter 13 - Concurrency
 __Chapter 41-42 of TC++PL__
 
+* The standard-library support is primarily aimed at supporting
+systems-level concurrency rather than directly providing sophisticated higher-level concurrency
+models
+* Concurrent execution of multiple threads in a single
+address space
+    * a suitable memory model (to ensure everything works unless data races)
+    * a set of atomic operations (allows lock-free programming)
 
+> ### Tasks and threads
+* _Task_ : a computation that can potentially be executed concurrently with other computations
+* _Thread_ : system-level representation of a task in a program
+* A task to be executed concurrently with other tasks is launched by constructing a std::thread under < thread>
+``` cpp
+#include <thread>
+void f();
 
+struct F
+{
+    void operator()();
+};
+
+void user()
+{
+    thread t1 {f}; // t1 task will be executed in seperate thread
+    thread t2 {F()}; // t1 task will be executed in seperate thread
+
+    // ensure that we don’t exit user() until the threads have completed
+    t1.join(); // wait for t1 to be terminates
+    t2.join(); // wait for t2 to be terminates
+
+}
+```
+* Threads of a program share a single address space
+* Threads differ from processes, which generally do not directly share data. Since threads share an address space, they can communicate through shared objects
+* Communication is typically controlled by locks or other
+mechanisms to prevent data races
+* Our aim is to keep tasks completely separate except
+where they communicate in simple and obvious ways
+* We just have to pass arguments, get a result back, and make sure that there is no use of shared data in between (no data races).
+* If there is no synchronization then, the output can be undesireable
+
+> ### Passing Arguments
+
+* Data, pointer and reference can be passed in as argument for a task
+* 
 
 <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> 
 
