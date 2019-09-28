@@ -174,3 +174,119 @@ namespace std::library1::library2 {
 }
 ```
 ---
+> ### 4. Template
+* Auto template deduction, makes make_Type redundant
+* But all the parameters have to be either specified or not
+* Partial deduction cant be done
+``` cpp
+// previously 
+std::pair <int, std::string> pair1 (31,"Something");
+
+// now
+auto pair1  = std::make_pair(31,"Something");
+
+// can be done using
+using namespace std::string_literal;
+std::pair pair1(42,"Something");
+
+// same for
+std::array arr1 {1,2,3};
+```
+* Exceptions like make_shared since they do something more than just creating shared pointers like control block and pointer memory allocation
+
+> ### Deduction guides
+* Used for figuring out template class type 
+* Two types:
+    * Complier geenrated (implicit type)
+    * User defined
+* These guides by compliers, will be created for each constructor (also copy/move) of the primary class template
+* SYNTAX
+``` for user defined
+template <typename T>
+struct MyType
+{
+    T str;
+};
+MyType(const char *) -> MyType<std::string>; // if not for this, the deduction would be for const char *
+MyType T{"Soemthing};
+```
+* Overloading
+``` cpp
+template<class... Ts>
+struct overload : Ts... { using Ts::operator()...; };
+template<class... Ts>
+overload(Ts...) -> overload<Ts...>; // deduction guide
+```
+> ### Fold expression
+* Even though variadic template reduces code, one has to specify rules if a recursive function has to be implemented
+``` cpp
+// previously
+auto summ(){
+    return 0;
+}
+
+template<typename T1, typename... T>
+auto summ(T1 s, T... ts)
+{
+    return s+ summ(ts); // recursive
+}
+
+// Now
+template<typename ...Args> auto summ(Args ...args)
+{
+    return(args+ ... +0);
+}
+
+// or 
+template<typename ...Args> auto summ(Args ...args)
+{
+    return(args+ ... );
+}
+```
+* Available with
+    * Unary left/right fold
+    * Binary left/right fold
+```cpp
+template<typename T, typename... Args>
+void push_back_vec(std::vector<T>& v, Args&&... args)
+{
+(v.push_back(std::forward<Args>(args)), ...);
+}
+std::vector<float> vf;
+push_back_vec(vf, 10.5f, 0.7f, 1.1f, 0.89f); // how to show the output(???)
+```
+> ### If constexpr
+* Allows to discard branches of if statement at complie-time based on constant expression condition
+* This is different than having just an if
+* The code in the discarded branch is not completely *removed*
+* Only the expressions that are dependent on the template parameter used in the condition are not instantiated but other things will be complied and can throw an error
+* Used as an alternate for SFINAE and tag dispatching
+
+SFINAE : Substitution failure is not an error (???)
+Tag dispatching : (???)
+std::is_integral_v (???)
+
+> ### auto in template
+``` cpp
+// before C++17
+template <typename Type, type value> constexpr Type TConstant = value;
+constexpr auto const SuperConst = TConstant<int, 100>;
+
+// after C++
+template <auto value> constexpr auto TConstant = value;
+constexpr auto const SuperConst = TConstant<100>;
+
+// heterogeneous complie time list (???)
+// before c++17, this would not be possible without a wrapper
+temaplte <auto ... vs>
+struct heteroValueList{};
+using list = heteroValueList<'a',100,'b'>;
+```
+
+> ### Other
+* "typename" and "class" can be inetrchangably used
+* All trait types that yields ::value (???) have a "_v" as suffix ex: std::is_integral_v
+* Pack expansion (???)
+* ...
+
+> ### 5. Standard Attributes
